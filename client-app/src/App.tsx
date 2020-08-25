@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 
 import axios from 'axios';
+import 'semantic-ui-css/semantic.min.css'
 import { Header, Icon, List } from 'semantic-ui-react';
 
 class App extends Component {
@@ -21,9 +22,9 @@ class App extends Component {
 
   render() {
     return (
-      <div >
+      <div>
         <Header as='h2'>
-          <Icon name='users' />
+          <Icon name='users'/>
           <Header.Content>Reactivities</Header.Content>
         </Header>
         <List>
@@ -31,7 +32,6 @@ class App extends Component {
             <List.Item key={value.id}>{value.name}</List.Item>
           ))}
         </List>
-
       </div>
     );
   }
