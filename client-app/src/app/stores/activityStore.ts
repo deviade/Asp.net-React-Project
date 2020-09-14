@@ -13,18 +13,33 @@ export class ActivityStore {
   @observable target = "";
 
   @computed get activityByDate() {
-    return Array.from(this.activityRegistry.values()).sort(
-      (a, b) => Date.parse(a.date) - Date.parse(b.date)
+    return this.groupActivitiesByDate(
+      Array.from(this.activityRegistry.values())
     );
   }
+  groupActivitiesByDate(activities: IActivity[]) {
+    const sortedActivities = activities.sort(
+      (a, b) => Date.parse(a.date) - Date.parse(b.date)
+    );
+    return Object.entries(
+      sortedActivities.reduce((activities, activity) => {
+        const date = activity.date.split("T")[0];
+        activities[date] = activities[date]
+          ? [...activities[date], activity]
+          : [activity];
+        return activities;
+      }, {} as { [key: string]: IActivity[] })
+    );
+  }
+
   @action loadActivities = async () => {
     this.loadingInitial = true;
     try {
-      const activities = await agent.Activities.list();
+      const activities = await agent.Activities.list();      
       runInAction("loading activities", () => {
         activities.forEach((activity) => {
           activity.date = activity.date.split(".")[0];
-          this.activityRegistry.set(activity.id, activity);
+          this.activityRegistry.set(activity.id, activity);          
         });
       });
     } catch (error) {
@@ -68,7 +83,6 @@ export class ActivityStore {
 
   @action selectActivity = (id: string) => {
     this.activity = this.activityRegistry.get(id);
-    
   };
 
   @action createActivity = async (activity: IActivity) => {
@@ -77,7 +91,7 @@ export class ActivityStore {
       await agent.Activities.create(activity);
       runInAction("create activity", () => {
         this.activityRegistry.set(activity.id, activity);
-        
+
         this.submitting = false;
       });
     } catch (error) {
@@ -93,7 +107,7 @@ export class ActivityStore {
       await agent.Activities.update(activity);
       runInAction("edit activity", () => {
         this.activityRegistry.set(activity.id, activity);
-        this.activity = activity;        
+        this.activity = activity;
         this.submitting = false;
       });
     } catch (error) {
@@ -123,8 +137,7 @@ export class ActivityStore {
       });
       console.log(error);
     }
-  };  
+  };
 }
 
 export default createContext(new ActivityStore());
- 
