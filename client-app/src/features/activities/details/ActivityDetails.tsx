@@ -14,7 +14,7 @@ import ActivityDetailedSideBar from './ActivityDetailedSideBar'
 interface DetailParams {
   id: string;
 }
-const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, history }) => {
+const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ history, match }) => {
 
   const activityStore = useContext(ActivityStore);
   const {
@@ -24,16 +24,20 @@ const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ match, h
   } = activityStore;
 
   useEffect(() => {
-    loadActivity(match.params.id)
-  }, [loadActivity, match.params.id]);
+    loadActivity(match.params.id);
+  }, [loadActivity, match.params.id, history]);
 
-  if (loadingInitial || !activity) return <LoadingComponent content='Loading Activity...' />
+  if (loadingInitial) return <LoadingComponent content='Loading Activity...' />
+
+  if (!activity) {
+    return <h2>Activity Not Found</h2>
+  }
 
   return (
     <Grid>
       <Grid.Column width={10}>
-        <ActivityDetailedHeader activity= {activity} />
-        <ActivityDetailedInfo activity= {activity} />
+        <ActivityDetailedHeader activity={activity} />
+        <ActivityDetailedInfo activity={activity} />
         <ActivityDetailedChat />
       </Grid.Column>
       <Grid.Column width={6}>
