@@ -20,7 +20,7 @@ const App: React.FC<RouteComponentProps> = ({ location }) => {
         <Fragment>
           <NavBar />
           <Container style={{ marginTop: '7em' }}>
-            <Switch>
+            <Switch>              
               <Route exact path='/activities' component={ActivityDashboard} />
               <Route path='/activities/:id' component={ActivityDetails} />
               <Route
