@@ -5,23 +5,23 @@ import { RouteComponentProps } from "react-router-dom";
 import "semantic-ui-css/semantic.min.css";
 import { Grid } from "semantic-ui-react";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
-import ActivityStore from '../../../app/stores/activityStore';
 import ActivityDetailedHeader from './ActivityDetailedHeader';
 import ActivityDetailedChat from './ActivityDetailedChat';
 import ActivityDetailedInfo from './ActivityDetailedInfo';
 import ActivityDetailedSideBar from './ActivityDetailedSideBar'
+import { RootStoreContent } from "../../../app/stores/rootStore";
 
 interface DetailParams {
   id: string;
 }
 const ActivityDetails: React.FC<RouteComponentProps<DetailParams>> = ({ history, match }) => {
 
-  const activityStore = useContext(ActivityStore);
+  const rootStore = useContext(RootStoreContent);
   const {
     activity,
     loadActivity,
     loadingInitial
-  } = activityStore;
+  } = rootStore.activityStore;
 
   useEffect(() => {
     loadActivity(match.params.id);
