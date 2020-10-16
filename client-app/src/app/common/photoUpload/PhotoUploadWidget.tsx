@@ -4,7 +4,6 @@ import { observer } from "mobx-react-lite";
 import PhotoWidgetDropzone from "./PhotoWidgetDropzone";
 import PhotoWidgetCropper from "./PhotoWidgetCropper";
 import { useState } from "react";
-import { Image } from "semantic-ui-react";
 import { useEffect } from "react";
 
 interface IProps {

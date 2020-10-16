@@ -72,11 +72,11 @@ export default class ProfileStore {
         this.profile!.photos.find((a) => a.isMain)!.isMain = false;
         this.profile!.photos.find((a) => a.id === photo.id)!.isMain = true;
         this.profile!.image = photo.url;
-        this.loading = false;        
+        this.loading = false;
         toast.success("Photo set as main");
       });
     } catch (error) {
-      toast.error("Problem setting Photo as main");      
+      toast.error("Problem setting Photo as main");
       runInAction(() => {
         this.loading = false;
       });
@@ -95,10 +95,26 @@ export default class ProfileStore {
         toast.success("Photo deleted");
       });
     } catch (error) {
-      toast.error("Problem deleting Photo");    
+      toast.error("Problem deleting Photo");
       runInAction(() => {
         this.loading = false;
       });
+    }
+  };
+
+  @action updateProfile = async (profile: Partial<IProfile>) => {
+    try {
+      await agent.Profiles.updateProfile(profile);
+      runInAction(() => {
+        if (
+          profile.displayName !== this.rootStore.userStore.user!.displayName
+        ) {
+          this.rootStore.userStore.user!.displayName = profile.displayName!;
+        }
+        this.profile = { ...this.profile!, ...profile };
+      });
+    } catch (error) {
+      toast.error("Problem updating profile");
     }
   };
 }
