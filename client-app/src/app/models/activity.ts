@@ -1,4 +1,3 @@
-
 export interface IActivity {
   id: string;
   title: string;
@@ -48,4 +47,5 @@ export interface IAttendee {
   displayName: string;
   image: string;
   isHost: boolean;
+  following?: boolean;
 }
