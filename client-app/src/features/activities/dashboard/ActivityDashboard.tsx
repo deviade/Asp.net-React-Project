@@ -1,30 +1,57 @@
-import React, { useContext, useEffect } from 'react'
-import { Grid } from 'semantic-ui-react'
-import ActivityList from './ActivityList'
-import { observer } from 'mobx-react-lite'
-import LoadingComponent from '../../../app/layout/LoadingComponent';
-import { RootStoreContent } from '../../../app/stores/rootStore';
+import React, { useContext, useEffect } from "react";
+import { Grid, Loader } from "semantic-ui-react";
+import ActivityList from "./ActivityList";
+import { observer } from "mobx-react-lite";
+import LoadingComponent from "../../../app/layout/LoadingComponent";
+import { RootStoreContent } from "../../../app/stores/rootStore";
+import { useState } from "react";
+import InfiniteScroll from "react-infinite-scroller";
+import ActivityFilters from "./ActivityFilters";
 
 const ActivityDashboard: React.FC = () => {
-    const rootStore = useContext(RootStoreContent);
-    const { loadActivities, loadingInitial } = rootStore.activityStore;
-    
-    useEffect(() => {
-        loadActivities();
-    }, [loadActivities]);
+  const rootStore = useContext(RootStoreContent);
+  const {
+    loadActivities,
+    loadingInitial,
+    setPage,
+    page,
+    totalPages,
+  } = rootStore.activityStore;
+  const [loadingNext, setLoadingNext] = useState(false);
 
-    if (loadingInitial) return <LoadingComponent content='Wait While Loading Activities' />
+  const handleGetNext = () => {
+    setLoadingNext(true);
+    setPage(page + 1);
+    loadActivities().then(() => setLoadingNext(false));
+  };
 
-    return (
-        <Grid>
-            <Grid.Column width={10}>
-                <ActivityList />
-            </Grid.Column>
-            <Grid.Column width={6}>
-                <h2>Activity Filter</h2>
-            </Grid.Column>
-        </Grid>
-    );
+  useEffect(() => {
+    loadActivities();
+  }, [loadActivities]);
+
+  if (loadingInitial && page === 0)
+    return <LoadingComponent content="Wait While Loading Activities" />;
+
+  return (
+    <Grid>
+      <Grid.Column width={10}>
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={handleGetNext}
+          hasMore={!loadingNext && page + 1 < totalPages}
+          initialLoad={false}
+        >
+          <ActivityList />
+        </InfiniteScroll>
+      </Grid.Column>
+      <Grid.Column width={6}>
+        <ActivityFilters />
+      </Grid.Column>
+      <Grid.Column width={10}>
+        <Loader active={loadingNext} />
+      </Grid.Column>
+    </Grid>
+  );
 };
 
 export default observer(ActivityDashboard);
